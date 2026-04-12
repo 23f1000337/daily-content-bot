@@ -1,0 +1,44 @@
+name: Daily Content Bot
+
+on:
+  schedule:
+    - cron: "17 18 * * *"   # runs daily
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Run script
+        run: python generate_content.py
+
+      - name: Stop after 1 year
+        run: |
+          START_DATE="2026-04-12"
+          END_DATE=$(date -d "$START_DATE + 365 days" +%Y-%m-%d)
+          TODAY=$(date -u +%Y-%m-%d)
+
+          if [[ "$TODAY" > "$END_DATE" ]]; then
+            echo "Stopping after 1 year"
+            exit 0
+          fi
+
+      - name: Commit & Push
+        run: |
+          git config --global user.name "your-username"
+          git config --global user.email "your-email"
+          git add .
+          git commit -m "Daily content update" || echo "No changes"
+          git push
