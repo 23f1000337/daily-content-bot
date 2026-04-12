@@ -1,58 +1,87 @@
+import os
 import random
 from datetime import datetime
 import requests
-import os
 
-# Ensure content folder exists
 os.makedirs("content", exist_ok=True)
 
-# ---- TECH FACTS ----
-tech_facts = [
-    "Python was named after Monty Python.",
-    "The first computer bug was a moth.",
-    "JavaScript was built in 10 days.",
-    "Git was created by Linus Torvalds.",
-    "AI learns patterns, not true understanding."
-]
+# ---- TECH TOPICS ----
+topics = {
+    "Artificial Intelligence": [
+        "Transformer Architecture",
+        "Neural Network Backpropagation",
+        "Large Language Models (LLMs)",
+        "Reinforcement Learning Basics"
+    ],
+    "Machine Learning": [
+        "Overfitting vs Underfitting",
+        "Gradient Descent Optimization",
+        "Feature Engineering Techniques",
+        "Bias-Variance Tradeoff"
+    ],
+    "Robotics": [
+        "SLAM (Simultaneous Localization and Mapping)",
+        "PID Control Systems",
+        "Robot Kinematics",
+        "Autonomous Navigation Systems"
+    ],
+    "Innovation": [
+        "AI Agents and Autonomous Systems",
+        "Edge AI Computing",
+        "Human-AI Collaboration",
+        "Future of Robotics in Industry"
+    ]
+}
 
-# ---- QUOTES ----
-quotes = [
-    "Discipline beats motivation.",
-    "Consistency creates success.",
-    "Small daily progress compounds.",
-    "Focus on systems, not goals.",
-    "Stay relentless."
-]
-
-# ---- AI NEWS ----
-def get_ai_news():
+# ---- FETCH TECH NEWS ----
+def get_tech_news():
     try:
-        url = "https://newsapi.org/v2/everything?q=artificial intelligence&sortBy=publishedAt&apiKey=3fe76714b74441d9a963d96648c8fd0c"
+        url = "https://newsapi.org/v2/everything?q=artificial intelligence OR robotics OR machine learning&sortBy=publishedAt&apiKey=3fe76714b74441d9a963d96648c8fd0c"
         res = requests.get(url).json()
         articles = res.get("articles", [])
         if articles:
             return articles[0]["title"]
     except:
         pass
-    return "AI is evolving rapidly every day."
+    return "AI and robotics continue to evolve rapidly with new breakthroughs."
 
-# ---- GENERATE ----
-today = datetime.utcnow().strftime("%Y-%m-%d")
+# ---- GENERATE TECH ARTICLE ----
+def generate_article():
+    category = random.choice(list(topics.keys()))
+    topic = random.choice(topics[category])
 
-content = f"""# {today}
+    return f"""# 📅 {datetime.utcnow().strftime("%Y-%m-%d")}
 
-## 💬 Quote
-{random.choice(quotes)}
+# 🧠 {topic}
 
-## 🧠 Tech Fact
-{random.choice(tech_facts)}
+## 🏷️ Domain: {category}
 
-## 🤖 AI News
-{get_ai_news()}
+## 📖 Concept Overview
+{topic} is a fundamental concept in {category.lower()}. It plays a critical role in modern intelligent systems and computational models.
+
+## ⚙️ How It Works
+At a technical level, {topic.lower()} involves mathematical modeling, algorithmic optimization, and data-driven decision-making. These systems rely heavily on structured data and iterative learning processes.
+
+## 🔬 Real-World Applications
+- Autonomous vehicles  
+- Recommendation systems  
+- Industrial robotics  
+- AI-powered assistants  
+
+## 📊 Key Insights
+- Efficiency improves with better data  
+- Model performance depends on tuning  
+- Real-world deployment requires robustness  
+
+## 📰 Latest Tech Insight
+{get_tech_news()}
 """
 
 # ---- SAVE FILE ----
-with open(f"content/{today}.md", "w") as f:
-    f.write(content)
+today = datetime.utcnow().strftime("%Y-%m-%d")
+filename = f"content/{today}.md"
 
-print("Generated:", today)
+with open(filename, "w") as f:
+    f.write(generate_article())
+
+print("Tech content generated!")
